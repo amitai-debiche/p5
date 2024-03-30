@@ -1,5 +1,6 @@
 typedef struct {
-//need to add struct fields here
-
-
+  uint locked;
+  struct spinlock lk;
+  char *name;
+  int pid; 
 } mutex; 
