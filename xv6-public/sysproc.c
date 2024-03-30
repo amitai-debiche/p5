@@ -104,3 +104,25 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+int
+sys_maquire(void)
+{
+  mutex *m;
+
+  if(argptr(0, &m, sizeof(struct mutex)) < 0)
+    return -1;
+  maquire(m);
+  return 0;
+}
+
+int 
+sys_mrelease(void)
+{
+  mutex *m;
+
+  if(argptr(0, &m, sizeof(struct mutex)) < 0)
+    return -1;
+  mrelease(m);
+  return 0;
+}

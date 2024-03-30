@@ -104,3 +104,17 @@ memmove(void *vdst, const void *vsrc, int n)
     *dst++ = *src++;
   return vdst;
 }
+
+void
+minit(struct mutex *m)
+{
+  // from initlock in spinlock.c
+  char* name = "mutex lock";
+  m->lk->name = &name;
+  m->lk->locked = 0;
+  m->lk->cpu = 0;
+  
+  // from initsleeplock in sleeplock.c
+  m->locked = 0;
+  m->pid = 0;
+}
