@@ -3,6 +3,8 @@
 #include "fcntl.h"
 #include "user.h"
 #include "x86.h"
+#include "spinlock.h"
+#include "usync.h"
 
 char*
 strcpy(char *s, const char *t)
@@ -109,6 +111,9 @@ void
 minit(struct mutex *m)
 {
   // from initlock in spinlock.c
+  // WE NEED TO MALLOC SPACE FOR THE SPINLOCK BEFORE WE CAN ASSIGN STUFF TO IT
+    
+
   char* name = "mutex lock";
   m->lk->name = &name;
   m->lk->locked = 0;
