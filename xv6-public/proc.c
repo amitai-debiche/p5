@@ -94,6 +94,7 @@ found:
   p->nclone = 0;
   p->sleepticks = -1;
   p->chan = 0;
+  p->priority = 0;
 
   release(&ptable.lock);
 
@@ -635,4 +636,24 @@ mrelease_helper(mutex *m)
   m->pid = 0;
   wakeup(m);
   release(&m->lk);
+}
+
+
+void
+nice(int priority)
+{
+  struct proc *p = myproc();
+  struct proc *p2;
+  acquire(&ptable.lock);
+  for(p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++) {
+    if (p2->pid == p->pid){
+      if (priority > 19)
+        priority = 19;
+      else if (priority < -20)
+        priority = -20;
+      p2->priority = priority;
+      break;
+    }
+  }
+  release(&ptable.lock);
 }
