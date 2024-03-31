@@ -1,4 +1,5 @@
-struct mutex;
+#include "spinlock.h"
+#include "usync.h"
 struct stat;
 struct rtcdate;
 
