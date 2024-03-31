@@ -1,3 +1,7 @@
+#ifndef DEFS_H
+#define DEFS_H
+#include "spinlock.h"
+#include "usync.h"
 struct buf;
 struct context;
 struct file;
@@ -9,7 +13,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
-struct mutex;
+
 
 // bio.c
 void            binit(void);
@@ -196,3 +200,4 @@ void            clearpteu(pde_t *pgdir, char *uva);
 
 // For grading
 void log_sched(struct proc* p);
+#endif
