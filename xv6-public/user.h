@@ -1,6 +1,6 @@
+struct mutex;
 struct stat;
 struct rtcdate;
-struct mutex;
 
 // system calls
 int fork(void);

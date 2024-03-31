@@ -123,8 +123,8 @@ int             wait(void);
 void            wakeup(void*);
 void            sleep_proc_notify(void);
 void            yield(void);
-void 		maquire(struct mutex*);
-void		mrelease(struct mutex*);
+void 		macquire(mutex*);
+void		mrelease(mutex*);
 
 // swtch.S
 void            swtch(struct context**, struct context*);

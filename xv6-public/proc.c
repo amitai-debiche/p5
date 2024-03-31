@@ -6,6 +6,7 @@
 #include "x86.h"
 #include "proc.h"
 #include "spinlock.h"
+#include "usync.h"
 
 Ptable ptable;
 
@@ -615,7 +616,7 @@ procdump(void)
 }
 
 void
-maquire(struct mutex *m)
+macquire(mutex *m)
 {
   acquire(&m->lk);
   while (m->locked) {
@@ -627,7 +628,7 @@ maquire(struct mutex *m)
 }
 
 void
-mrelease(struct mutex *m)
+mrelease(mutex *m)
 {
   acquire(&m->lk);
   m->locked = 0;

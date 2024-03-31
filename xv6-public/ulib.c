@@ -108,11 +108,11 @@ memmove(void *vdst, const void *vsrc, int n)
 }
 
 void
-minit(struct mutex *m)
+minit(mutex *m)
 {
   // from initlock in spinlock.c
   // WE NEED TO MALLOC SPACE FOR THE SPINLOCK BEFORE WE CAN ASSIGN STUFF TO IT
-    
+  
 
   char* name = "mutex lock";
   m->lk->name = &name;
