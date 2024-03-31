@@ -1,10 +1,9 @@
 #include "types.h"
 #include "stat.h"
 #include "fcntl.h"
+#include "spinlock.h"
 #include "user.h"
 #include "x86.h"
-#include "spinlock.h"
-#include "usync.h"
 
 char*
 strcpy(char *s, const char *t)

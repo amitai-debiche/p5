@@ -9,7 +9,7 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
-struct mutex;
+typedef struct mutex mutex;
 
 // bio.c
 void            binit(void);
