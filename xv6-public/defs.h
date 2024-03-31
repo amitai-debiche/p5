@@ -9,8 +9,8 @@ struct spinlock;
 struct sleeplock;
 struct stat;
 struct superblock;
-typedef struct mutex mutex;
 
+#include "usync.h"
 
 // bio.c
 void            binit(void);

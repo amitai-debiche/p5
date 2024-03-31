@@ -5,6 +5,8 @@
 #include "user.h"
 #include "x86.h"
 
+void initlock(struct spinlock*, char*);
+
 char*
 strcpy(char *s, const char *t)
 {
@@ -112,13 +114,12 @@ minit(mutex *m)
   // from initlock in spinlock.c
   // WE NEED TO MALLOC SPACE FOR THE SPINLOCK BEFORE WE CAN ASSIGN STUFF TO IT
   
-
   char* name = "mutex lock";
-  m->lk->name = &name;
-  m->lk->locked = 0;
-  m->lk->cpu = 0;
-  
+  (&m->lk)->name = name;
+  (&m->lk)->locked = 0;
+  (&m->lk)->cpu = 0;
   // from initsleeplock in sleeplock.c
+  m->name = name;
   m->locked = 0;
   m->pid = 0;
 }
