@@ -111,7 +111,7 @@ sys_maquire(void)
 {
   mutex *m;
 
-  if(argptr(0, &m, sizeof(struct mutex)) < 0)
+  if(argptr(0, &m, sizeof(mutex)) < 0)
     return -1;
   maquire(m);
   return 0;
@@ -122,7 +122,7 @@ sys_mrelease(void)
 {
   mutex *m;
 
-  if(argptr(0, &m, sizeof(struct mutex)) < 0)
+  if(argptr(0, &m, sizeof(mutex)) < 0)
     return -1;
   mrelease(m);
   return 0;
