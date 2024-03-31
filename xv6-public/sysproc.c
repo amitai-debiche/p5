@@ -113,7 +113,7 @@ sys_maquire(void)
 
   if(argptr(0, &m, sizeof(mutex)) < 0)
     return -1;
-  maquire(m);
+  maquire_helper(m);
   return 0;
 }
 
@@ -124,6 +124,6 @@ sys_mrelease(void)
 
   if(argptr(0, &m, sizeof(mutex)) < 0)
     return -1;
-  mrelease(m);
+  mrelease_helper(m);
   return 0;
 }

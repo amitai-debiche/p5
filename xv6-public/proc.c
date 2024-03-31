@@ -616,7 +616,7 @@ procdump(void)
 }
 
 void
-macquire(mutex *m)
+macquire_helper(mutex *m)
 {
   acquire(&m->lk);
   while (m->locked) {
@@ -628,7 +628,7 @@ macquire(mutex *m)
 }
 
 void
-mrelease(mutex *m)
+mrelease_helper(mutex *m)
 {
   acquire(&m->lk);
   m->locked = 0;
