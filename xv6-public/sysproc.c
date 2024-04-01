@@ -109,21 +109,25 @@ sys_uptime(void)
 int
 sys_macquire(void)
 {
-  mutex m;
-
-  if(argptr(0, (char **)&m, sizeof(mutex)) < 0)
+  int mm;
+  
+  //if(argptr(0, (char **)&m, sizeof(mutex)) < 0)
+  if(argint(0, &mm))
     return -1;
-  macquire_helper(&m);
+  mutex *m = (mutex *) mm;
+  macquire_helper(m);
   return 0;
 }
 
 int 
 sys_mrelease(void)
 {
-  mutex m;
+  int mm;
 
-  if(argptr(0, (char **)&m, sizeof(mutex)) < 0)
+  //if(argptr(0, (char **)&m, sizeof(mutex)) < 0)
+  if(argint(0, &mm))
     return -1;
-  mrelease_helper(&m);
+  mutex *m = (mutex *) mm;
+  mrelease_helper(m);
   return 0;
 }

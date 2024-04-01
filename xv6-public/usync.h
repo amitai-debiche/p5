@@ -5,7 +5,7 @@
 typedef struct {
   uint locked;
   struct spinlock lk;
-  char *name;
+  //char *name;
   int pid; 
 } mutex; 
 #endif

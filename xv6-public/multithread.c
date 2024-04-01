@@ -4,11 +4,16 @@
 #define N_THREAD 4
 
 int global_counter = 0;
+mutex m;
 
 void fn(void* arg) {
-  for (int i = 0; i < 100000; i++) {
+  for (int i = 0; i < 100; i++) {
     // race condition
-    global_counter++;
+    macquire(&m);
+    int local_copy = global_counter;
+    if(i % 10 == 0) sleep(0);
+    global_counter = local_copy + 1;
+    mrelease(&m);
   }
 
   exit();
@@ -16,6 +21,7 @@ void fn(void* arg) {
 
 int main() {
   char* stacks[N_THREAD];
+  minit(&m);
   for (int i = 0; i < N_THREAD; i++) {
     stacks[i] = (char*)malloc(4096);
   }

@@ -618,9 +618,19 @@ procdump(void)
 void
 macquire_helper(mutex *m)
 {
+  // calculate PA, not used for now but could be useful for future references
+  uint pa = 0;
+  acquire(&ptable.lock);
+  pde_t *pte = walkpgdir(myproc()->pgdir, (void*)(m), 0);
+  if (pte && (*pte & PTE_P)) {
+    pa = PTE_ADDR(*pte);
+    pa = pa + PTE_FLAGS(m);
+  }
+  release(&ptable.lock);
+  
   acquire(&m->lk);
   while (m->locked) {
-    sleep(m, &m->lk);
+    sleep((void *)m, &m->lk);
   }
   m->locked = 1;
   m->pid = myproc()->pid;
@@ -630,9 +640,19 @@ macquire_helper(mutex *m)
 void
 mrelease_helper(mutex *m)
 {
+  // calculate PA, not used for now but could be useful for future references
+  uint pa = 0;
+  acquire(&ptable.lock);
+  pde_t *pte = walkpgdir(myproc()->pgdir, (void*)(m), 0);
+  if (pte && (*pte & PTE_P)) {
+    pa = PTE_ADDR(*pte);
+    pa = pa + PTE_FLAGS(m);
+  }
+  release(&ptable.lock);
+  
   acquire(&m->lk);
   m->locked = 0;
   m->pid = 0;
-  wakeup(m);
+  wakeup((void *)m);
   release(&m->lk);
 }
