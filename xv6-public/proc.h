@@ -58,6 +58,7 @@ struct proc {
   int nclone;                  // Number of clone calls on this proc (for grading)
   int sleepticks;              // Number of ticks left the process should sleep for
   struct mutex *mlock;         // Mutex lock
+  int priority;                 // priority of thread
 };
 typedef struct {
   struct spinlock lock;
