@@ -413,13 +413,15 @@ scheduler(void)
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+
       highprio = p;
       //choose highest prio process
-      for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1 ++){
+      for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1 ++) {
         if (p1->state != RUNNABLE)
           continue;
-        if (highprio->priority > p1->priority)
+        if (highprio->priority > p1->priority) { 
           highprio = p1;
+	}
       }
       p = highprio;
       c->proc = p;
@@ -630,6 +632,7 @@ void
 macquire_helper(mutex *m)
 {
   // calculate PA, not used for now but could be useful for future references
+  /*
   uint pa = 0;
   acquire(&ptable.lock);
   pde_t *pte = walkpgdir(myproc()->pgdir, (void*)(m), 0);
@@ -638,7 +641,7 @@ macquire_helper(mutex *m)
     pa = pa + PTE_FLAGS(m);
   }
   release(&ptable.lock);
-  
+  */
   acquire(&m->lk);
   while (m->locked) {
     sleep((void *)m, &m->lk);
@@ -652,6 +655,7 @@ void
 mrelease_helper(mutex *m)
 {
   // calculate PA, not used for now but could be useful for future references
+  /*
   uint pa = 0;
   acquire(&ptable.lock);
   pde_t *pte = walkpgdir(myproc()->pgdir, (void*)(m), 0);
@@ -660,7 +664,7 @@ mrelease_helper(mutex *m)
     pa = pa + PTE_FLAGS(m);
   }
   release(&ptable.lock);
-  
+  */
   acquire(&m->lk);
   m->locked = 0;
   m->pid = 0;
