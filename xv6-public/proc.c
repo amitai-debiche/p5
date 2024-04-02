@@ -94,7 +94,11 @@ found:
   p->nclone = 0;
   p->sleepticks = -1;
   p->chan = 0;
-  p->priority = 0;
+  p->oldprio = 0;
+  for(int i = 0; i < 16; i++) p->lockhold[i] = 0;
+  for(int i = 0; i < 16; i++) p->lockwant[i] = 0;
+  p->nlock = 0;
+  p->highprio = 0;
 
   release(&ptable.lock);
 
@@ -402,7 +406,7 @@ scheduler(void)
   for(;;){
     // Enable interrupts on this processor.
     sti();
-    struct proc *highprio;
+    struct proc *highp;
 
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
@@ -414,16 +418,16 @@ scheduler(void)
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
 
-      highprio = p;
+      highp = p;
       //choose highest prio process
       for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1 ++) {
         if (p1->state != RUNNABLE)
           continue;
-        if (highprio->priority > p1->priority) { 
-          highprio = p1;
+        if (highp->highprio > p1->highprio) { 
+          highp = p1;
 	}
       }
-      p = highprio;
+      p = highp;
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -642,13 +646,53 @@ macquire_helper(mutex *m)
   }
   release(&ptable.lock);
   */
+  // update lock wanted
+  acquire(&ptable.lock);
+  struct proc *p = myproc();
+  for(int i = 0; i < 16; i++) {
+    if(p->lockwant[i] == 0) {
+      p->lockwant[i] = m;
+      break;
+    }
+  }
+  release(&ptable.lock);
+
   acquire(&m->lk);
   while (m->locked) {
+    // donate priority
+    acquire(&ptable.lock);
+    for (struct proc *p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++) {
+      if(p1->state != RUNNABLE) continue; 
+      for(int i = 0; i < 16; i++) {
+        if (p1->lockhold[i] == m  // holds the lock
+	    && p1->highprio > p->oldprio) // has lower priority
+          p1->highprio = p->oldprio;
+      }
+    }
+    release(&ptable.lock);
     sleep((void *)m, &m->lk);
   }
   m->locked = 1;
   m->pid = myproc()->pid;
   release(&m->lk);
+  
+  // since holding the lock, updates lock its holding
+  acquire(&ptable.lock);
+  p = myproc();
+  for(int i = 0; i < 16; i++) {
+    if(p->lockhold[i] == 0) {
+      p->lockhold[i] = m;
+      break;
+    }
+  }
+  p->nlock++;
+  for(int i = 0; i < 16; i++) {
+    if(p->lockwant[i] == m) {
+      p->lockwant[i] = 0;
+      break;
+    }
+  }
+  release(&ptable.lock);
 }
 
 void
@@ -665,7 +709,33 @@ mrelease_helper(mutex *m)
   }
   release(&ptable.lock);
   */
+
   acquire(&m->lk);
+
+  // updates lockhold, highprio
+  acquire(&ptable.lock);
+  struct proc *p = myproc();
+  for(int i = 0; i < 16; i++) {
+    if(p->lockhold[i] == m) {
+      p->lockhold[i] = 0;
+      break;
+    }
+  }
+  p->nlock--;
+  p->highprio = p->oldprio;
+  for(int i = 0; i < 16; i++) {
+    if(p->lockhold[i] == 0) continue;
+    for (struct proc *p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1 ++) {
+        if (p1->state != RUNNABLE) continue;
+        for(int j = 0; j < 16; j++) {
+          if(p1->lockwant[j] == p->lockhold[i]) {
+	    if(p1->oldprio < p->highprio) p->highprio = p1->oldprio;
+	  }
+	}
+      }
+  }
+  release(&ptable.lock);
+
   m->locked = 0;
   m->pid = 0;
   wakeup((void *)m);
@@ -681,11 +751,13 @@ nice(int priority)
   acquire(&ptable.lock);
   for(p2 = ptable.proc; p2 < &ptable.proc[NPROC]; p2++) {
     if (p2->pid == p->pid){
-      if (priority > 19)
+      if (priority > 19) {
         priority = 19;
+      }
       else if (priority < -20)
         priority = -20;
-      p2->priority = priority;
+      p2->oldprio = priority;
+      if(p2->highprio == 0 || p2->highprio > priority) p2->highprio = priority;
       break;
     }
   }

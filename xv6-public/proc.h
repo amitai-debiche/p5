@@ -57,8 +57,11 @@ struct proc {
   char name[MAXPROCNAMELEN];               // Process name (debugging)
   int nclone;                  // Number of clone calls on this proc (for grading)
   int sleepticks;              // Number of ticks left the process should sleep for
-  struct mutex *mlock;         // Mutex lock
-  int priority;                 // priority of thread
+  void *lockhold[16];  // Mutex locks held
+  void *lockwant[16];  // Mutex locks wanted
+  int nlock;                   // Number of mutex locks
+  int oldprio;        // priority from nice sys calls
+  int highprio;                // highest priority from other threads wanting its lock
 };
 typedef struct {
   struct spinlock lock;
