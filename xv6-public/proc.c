@@ -428,6 +428,7 @@ scheduler(void)
           highp = p1;
 	    }else {
           p1->waitTime+=1;
+        }
       }
       highp->waitTime = 0;
       p = highp;
