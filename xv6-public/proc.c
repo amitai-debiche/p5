@@ -664,7 +664,6 @@ macquire_helper(mutex *m)
   release(&ptable.lock);
 
   acquire(&m->lk);
-  cprintf("macquire get lock");
   while (m->locked) {
     // donate priority
     acquire(&ptable.lock);
@@ -718,7 +717,6 @@ mrelease_helper(mutex *m)
   */
 
   acquire(&m->lk);
-  cprintf("mrelease give lock");
 
   // updates lockhold, highprio
   acquire(&ptable.lock);
