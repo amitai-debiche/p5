@@ -62,6 +62,7 @@ struct proc {
   int nlock;                   // Number of mutex locks
   int oldprio;        // priority from nice sys calls
   int highprio;                // highest priority from other threads wanting its lock
+  int waitTime;                //waitTime
 };
 typedef struct {
   struct spinlock lock;
