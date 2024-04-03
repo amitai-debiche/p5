@@ -424,10 +424,12 @@ scheduler(void)
       for (p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1 ++) {
         if (p1->state != RUNNABLE)
           continue;
-        if ((highp->highprio >= p1->highprio) && (highp->waitTime > p1->waitTime)) { 
+        if (highp->highprio >= p1->highprio) { 
           highp = p1;
-	    }else {
-          p1->waitTime+=1;
+	    }else if ((highp->highprio == p1->highprio) && (p1->waitTime > highp->waitTime)) {
+          highp = p1;
+        }else {
+          p1->waitTime += 1;
         }
       }
       highp->waitTime = 0;
