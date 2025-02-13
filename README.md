@@ -1,9 +1,9 @@
 Identification:
 **name**: Amitai Debiche
 **cs-login**: amitai
-**wisc-id**: debiche
-**wisc-id-number**:9083648916
-**email**: debiche@wisc.edu
+**wisc-id**: 
+**wisc-id-number**:
+**email**: 
 
 name: Haochen He
 cs-login: hhe
